@@ -1,0 +1,40 @@
+Jenkins + Ubuntu VM Agent Configuration
+
+1. Prepare Ubuntu VM for Jenkins Agent
+Install Java:
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+Install and start SSH server:
+sudo apt install openssh-server -y
+sudo systemctl enable ssh
+sudo systemctl start ssh
+Check Ubuntu IP using:
+ip a
+2. Create SSH Credentials in Jenkins
+Navigate to: Manage Jenkins → Credentials → (global) → Add Credentials
+Type: Username with password
+Username: shaan
+Password: (your Ubuntu password)
+ID: UbuntuVM
+3. Add Ubuntu VM as Jenkins Agent (Node)
+Navigate to: Manage Jenkins → Nodes → New Node
+Fill in:
+Node Name: ubuntu-agent
+Remote root directory: /home/shaan/jenkins-agent
+Labels: ubuntu
+Launch method: Launch agent via SSH
+SSH Config:
+Host: 192.168.141.129
+Credentials: UbuntuVM
+Host Key Verification: Non-verifying strategy
+4. Test Connection
+Jenkins should connect, copy remoting.jar, and bring agent online. You should see:
+Agent successfully connected and online
+5. Create a Freestyle Job to Test Remote Execution
+Jenkins → New Item → Freestyle Project → Add build step: Execute shell
+echo "Running from: $(hostname)"
+echo "Current user: $(whoami)"
+date
+You should see output from Ubuntu agent.
+✔ Setup Complete
+You now have a Jenkins master on Windows, and Ubuntu VM as a Jenkins agent via SSH.
